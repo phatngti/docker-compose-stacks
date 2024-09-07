@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  vnalo-be:
+    container_name: vnalo-be
+    image: vnalo-be
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./.env
+    environment:
+      VIRTUAL_HOST: staging-api.vnalo.co
+      VIRTUAL_PORT: 8080
+    restart: always
+    networks:
+      - be
+
+networks:
+  be:
+    name: vnalo_prod
+    external: true

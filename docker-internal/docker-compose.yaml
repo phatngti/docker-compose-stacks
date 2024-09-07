@@ -1,0 +1,68 @@
+version: "3.8"
+services:
+  cache-prod:
+    image: redis/redis-stack-server:latest
+    container_name: cache-prod
+    restart: always
+    ports:
+      - "${REDIS_PORT_PROD}:6379"
+    env_file:
+      - ./.env
+    command: >
+      redis-server
+        --loadmodule opt/redis-stack/lib/rejson.so
+        --loadmodule opt/redis-stack/lib/redisearch.so
+        --appendonly yes
+        --replica-read-only no
+        --save 20 1
+        --loglevel warning
+        --requirepass ${REDIS_PASS_PROD}
+    networks:
+      - services-prod
+    volumes:
+      - ./rejson.so:/usr/lib/rejson.so
+
+  db-prod:
+    image: postgres:13.4
+    container_name: db-prod
+    ports:
+      - "${DB_PORT_PROD}:5432"
+    environment:
+      POSTGRES_PASSWORD: "${DB_PASSWORD_PROD}"
+      POSTGRES_USER: ${DB_USERNAME_PROD}
+      POSTGRES_DB: ${DB_DATABASE_PROD}
+    networks:
+      - services-prod
+
+  # cache-dev:
+  #   image: redis
+  #   container_name: cache-dev
+  #   restart: always
+  #   ports:
+  #     - "${REDIS_PORT_DEV}:6379"
+  #   env_file:
+  #     - ./.env
+  #   command: redis-server --appendonly yes --replica-read-only no --save 20 1 --loglevel warning --requirepass ${REDIS_PASS_DEV}
+  #   networks:
+  #     - services-dev
+
+  # db-dev:
+  #   image: postgres:13.4
+  #   container_name: db-dev
+  #   ports:
+  #     - "${DB_PORT_DEV}:5432"
+  #   environment:
+  #     POSTGRES_PASSWORD: "${DB_PASSWORD_DEV}"
+  #     POSTGRES_USER: ${DB_USERNAME_DEV}
+  #     POSTGRES_DB: ${DB_DATABASE_DEV}
+  #   networks:
+  #     - services-dev
+
+networks:
+  services-prod:
+    driver: bridge
+    name: vnalo_prod
+
+  # services-dev:
+  #   driver: bridge
+  #   name: vnalo_dev

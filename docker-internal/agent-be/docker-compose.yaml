@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  vnalo-agent-be:
+    container_name: vnalo-agent-be
+    image: vnalo-agent-be
+    ports:
+      - "9999:9999"
+    env_file:
+      - ./.env
+    # restart: always
+    command: npm run start:prod
+    networks:
+      - be
+
+networks:
+  be:
+    name: vnalo_prod
+    external: true

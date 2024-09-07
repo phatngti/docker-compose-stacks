@@ -1,0 +1,18 @@
+# PATH: /home/jenkins/docker/vnalo/vnalo-fe
+version: "3.8"
+services:
+  vnalo-agent-fe:
+    container_name: vnalo-agent-fe
+    image: vnalo-agent-fe
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    restart: always
+    networks:
+      - fe
+
+networks:
+  fe:
+    name: vnalo_prod
+    external: true
